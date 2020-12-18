@@ -81,6 +81,7 @@ module Puma
 
       @options = options
       @queue_requests = options[:queue_requests].nil? ? true : options[:queue_requests]
+      puts "83" + @queue_requests.to_s
 
       ENV['RACK_ENV'] ||= "development"
 
@@ -613,9 +614,13 @@ module Puma
         colon = COLON
 
         http_11 = if env[HTTP_VERSION] == HTTP_11
+          puts "http_11"
+
           allow_chunked = true
           keep_alive = env.fetch(HTTP_CONNECTION, "").downcase != CLOSE
           include_keepalive_header = false
+          puts "KA" + keep_alive.inspect
+          puts "IKAH" + include_keepalive_header.inspect
 
           # An optimization. The most common response is 200, so we can
           # reply with the proper 200 status without having to compute
@@ -631,9 +636,15 @@ module Puma
           end
           true
         else
+          puts "not http_11"
+
           allow_chunked = false
           keep_alive = env.fetch(HTTP_CONNECTION, "").downcase == KEEP_ALIVE
           include_keepalive_header = keep_alive
+
+          puts "KA" + keep_alive.inspect
+          puts "IKAH" + include_keepalive_header.inspect
+
 
           # Same optimization as above for HTTP/1.1
           #
@@ -679,6 +690,9 @@ module Puma
         elsif http_11 && !keep_alive
           lines << CONNECTION_CLOSE
         end
+
+        puts "lines"
+        puts lines.inspect
 
         if no_body
           if content_length and status != 204
