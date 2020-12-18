@@ -685,11 +685,7 @@ module Puma
           end
         end
 
-        if include_keepalive_header
-          lines << CONNECTION_KEEP_ALIVE
-        elsif http_11 && !keep_alive
-          lines << CONNECTION_CLOSE
-        end
+        lines << CONNECTION_KEEP_ALIVE
 
         puts "lines"
         puts lines.inspect
